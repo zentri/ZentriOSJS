@@ -1,3 +1,3 @@
 # ZentriOSJS
 
-See https://github.com/WiConnectJS
+See https://github.com/zentri/WiConnectJS
