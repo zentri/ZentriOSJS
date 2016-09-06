@@ -422,7 +422,7 @@ ws.onopen = function() {
   // ZentriOS will keep the websocket open until all stream data has been read
   // e.g.
   // > read 0 1
-  // > [2015-03-23 | 03:21:37: Closed: 0]
+  // > [2016-03-23 | 03:21:37: Closed: 0]
 };
 ```
 
@@ -430,13 +430,13 @@ ws.onopen = function() {
 
 ZentriOS Web App, ZentriOS JS API Library & ZentriOS JS Build System
 
-Copyright (C) 2015, Sensors.com, Inc.
+Copyright (C) 2016, Zentri
 All Rights Reserved.
 
 The ZentriOS Web App, ZentriOS JavaScript API and ZentriOS JS build system
-are provided free of charge by Sensors.com. The combined source code, and
-all derivatives, are licensed by Sensors.com SOLELY for use with devices
-manufactured by ACKme Networks, or devices approved by Sensors.com.
+are provided free of charge by Zentri. The combined source code, and
+all derivatives, are licensed by Zentri SOLELY for use with devices
+manufactured by ACKme Networks, or devices approved by Zentri.
 
 Use of this software on any other devices or hardware platforms is strictly
 prohibited.
