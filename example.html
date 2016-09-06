@@ -1,0 +1,152 @@
+<html>
+  <head>
+    <script type="text/javascript" src="bower_components/superagent/superagent.js"></script>
+    <script type="text/javascript" src="node_modules/superagent/superagent.js"></script>
+    <script type="text/javascript" src="lib/main.js"></script>
+    <style>
+      body {
+        font-family: monospace;
+      }
+      h5 {
+        font-weight: 400;
+      }
+      pre, code {
+        background: #eee;
+        border: 1px solid #ccc;
+        padding: 4px;
+        line-height: 12pt;
+        border-radius: 2px;
+      }
+      span {
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Setup</h3>
+    <p>In a terminal navigate to the ZentriOSJS directory and run:</p>
+    <pre>npm install</pre>
+    <p>or</p>
+    <pre>bower install</pre>
+    <p>Refresh this page after bower installation complete.</p>
+    <h3>Configure ZentriOS Device</h3>
+      <pre>nup -s
+set wl o e 1
+set ht s e 1
+set ht s c *
+save
+reboot</pre>
+    <p>Note the device IP address</p>
+    <h3>Using ZentriOSJS API</h3>
+    <p>Open Developer Tools - F12<br> Open Console </p>
+    <h4>Instantiating a device</h4>
+    <pre>var device = new ZentriOSDevice({host: 'http://[deviceIP]' <span>[, auth: {user: 'username', pass: 'password'}]</span>});</pre>
+    <p>example: <pre>var device = new ZentriOSDevice({host: 'http://12.34.56.78'});</pre></p>
+    <h4>Issue command to device</h4>
+    <pre>device.[command](<span>[{args: 'command_arguments' [, flags: 0]}]</span>);</pre>
+    <p>example: <pre>device.ver();<br>device.ls();<br>device.ls({args: '-v'});</pre></p>
+    <p>An object will be returned each time a command is issued to a device and can be stored for later use.</p>
+    <p>example: <pre>var versionRequest = device.ver();</pre></p>
+    <h4>Issue command to device defining callback function</h4>
+    <pre>device.[command](<span>[{args: 'command_arguments' [, flags: 0]} [, callback(error, response){}]|[callback(error, response){}]]</span>);</pre>
+    <p>example: <pre>device.ver(function(err, resp){ console.log(resp); });<br>device.ls(function(err, resp){ console.log(resp); });<br>device.ls({args: '-v'}, function(err, resp){ console.log(resp); });<br>device.reboot();</pre></p>
+    <p>The response from the first three commands will be logged to the javascript console once each command has completed. </p>
+    <h4>Issue command to device using promise return functions</h4>
+    <pre>device.[command](<span>[{args: 'command_arguments' [, flags: 0]}]</span>)<span>[.done(function(response){})][.fail( function(response){})][.always( function(response){})]</span>;</pre>
+    <h5><code>.done(<span>function(response){}</span>)</code> function to run when command returns with a successful response</h5>
+    <h5><code>.fail(<span>function(response){}</span>)</code> function to run when command returns with a failure response</h5>
+    <h5><code>.always(<span>function(response){}</span>)</code> function to run when command response completes no matter whether success or failure</h5>
+    <p>example: <pre>var versionRequest = device.ver();
+
+<span>//setup function to always log to console no matter whether failure or success</span>
+versionRequest.always(function(resp) {
+  console.log('request complete.');
+});
+
+<span>//setup success function for when response received</span>
+versionRequest.done(function(resp) {
+  console.log('success!');
+  console.log('response: ', resp);
+  console.log('ZentriOS Version:', resp.response);
+});
+
+<span>//setup failure function for when HTTP error received</span>
+versionRequest.fail(function(err, resp) {
+  console.log('fail!');
+  console.log('error:', err);
+});
+
+</pre>
+    <h4>Set request timeout</h4>
+    <p>A <code>timeout</code> argument can be specified for commands to invoke a timeout error on the request after the specified number of milliseconds.</p>
+    <p>example: <pre><span>//set an extremely small timeout period of 5milliseconds to ensure timeout error occurs</span><br>device.ver({timeout: 5}).fail(function(){console.log('no response after 5 milliseconds')});</pre></p>
+    <h4>Abort command request</h4>
+    <h5><code>.abort()</code> immediately abort request</h5>
+    <p>example: <pre>var versionRequest = device.ver();<br><br><span>//lets not wait for the response and abort the request immediately</span><br>versionRequest.abort();</pre></p>
+    <h3>Using WebSockets</h3>
+    <h4>Connect to a device</h4>
+    <pre>var ws = new WebSocket('ws://[deviceIP]/stream');</pre>
+    <p>example:</p>
+    <pre>var ws = new WebSocket('ws://12.34.56.78/stream');</pre>
+    <h4>WebSocket methods</h4>
+    <h5><code>.onopen</code> handle for WebSocket open event </h5>
+    <h5><code>.onmessage</code> handler for WebSocket message received event </h5>
+    <h5><code>.onclose</code> handler for WebSocket close event </h5>
+    <h5><code>.send(<span>[message_data]</span>)</code> Send a WebSocket message to the device </h5>
+    <h5><code>.close()</code> Initiate WebSocket close handshake </h5>
+    <p>example:</p>
+    <pre>var ws = new WebSocket('ws://12.34.56.78/stream');
+
+<span>// function to execute once the websocket has been closed</span>
+ws.onclose = function() {
+  <span>// log a message to the console when the websocket is closed</span>
+  console.log('WebSocket has been closed!');
+};
+
+<span>// function to execute each time a message is received via the websocket</span>
+ws.onmessage = function(event) {
+  var reader;
+
+  <span>// log the message binary blob data to the console when we receive a websocket message</span>
+  if(event.data instanceof Blob) {
+    reader = new FileReader();
+    reader.onload = function() {
+      return console.log(reader.result);
+    };
+    return reader.readAsText(event.data);
+  }
+}
+
+<span>// function to execute when the socket has been opened successfully</span>
+ws.onopen = function() {
+  <span>// log a message once websocket connection handshake is complete</span>
+  console.log('WebSocket open to ZentriOS device!');
+
+  <span>// use 'list' command using a serial terminal, or using ZentriOSJS
+  // open streams on the device will be displayed including a 'WEBS' stream
+  // indicating the open websocket
+  // e.g. using serial terminal
+  // > list
+  // ! # Type  Info
+  // # 0 WEBS  12.34.56.78:80 12.34.56.78:54460
+
+  // now that the websocket is connected, send a message to the ZentriOS device</span>
+  ws.send('I am a teapot.');
+
+  <span>// using a serial terminal, or using ZentriOSJS read the stream
+  // e.g. using serial terminal
+  // > read 0 14
+  // I am a teapot.</span>
+
+  <span>// close the websocket</span>
+  ws.close();
+
+  <span>// note: the websocket will not be immediately closed
+  // ZentriOS will keep the websocket open until all stream data has been read
+  // e.g.
+  // > read 0 1
+  // > [2015-03-23 | 03:21:37: Closed: 0]</span>
+};
+</pre>
+  </body>
+</html>
