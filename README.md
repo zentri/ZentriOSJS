@@ -34,13 +34,13 @@ npm install git://github.com:zentri/ZentriOSJS.git#WL
 ### Configure ZentriOS Device
 ```javascript
 //join network
-nup -s
+network_up -s
 //set wlan autoconnect
-set wl o e 1
+set wlan.auto_join.enabled 1
 //enable http server
-set ht s e 1
+set http.server.enabled 1
 //set http server CORS origin to wildcard to allow remote requests
-set ht s c *
+set http.server.cors_origin *
 //save config & reboot
 save
 reboot
