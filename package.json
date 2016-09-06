@@ -1,0 +1,17 @@
+{
+  "name": "zentriosjs",
+  "description": "Interface with Zentri Hardware",
+  "version": "1.0.0",
+  "author": {
+    "name": "Andrew Mitchell",
+    "email": "brew@zentri.com"
+  },
+  "main": "./lib/main",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zentri/ZentriOSJS.git"
+  },
+  "dependencies": {
+    "superagent": "^0.21.0"
+  }
+}
