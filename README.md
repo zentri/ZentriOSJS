@@ -19,13 +19,13 @@ ZentriOSJS can be installed with [NPM](https://www.npmjs.com/)
 For ZentriOS-W edition:
 
 ```
-npm install git://github.com:zentri/ZentriOSJS.git#W
+npm install https://github.com:zentri/ZentriOSJS.git#W
 ```
 
 For ZentriOS-WL edition:
 
 ```
-npm install git://github.com:zentri/ZentriOSJS.git#WL
+npm install https://github.com:zentri/ZentriOSJS.git#WL
 ```
 
 
